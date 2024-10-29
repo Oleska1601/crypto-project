@@ -1,0 +1,108 @@
+basePath: /
+definitions:
+  entity.User:
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
+      password:
+        type: string
+      password_hash:
+        type: string
+      salt:
+        type: string
+      secret:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a server for cryptocurrency with login and registration
+  termsOfService: http://swagger.io/terms/
+  title: Crypto-Project API
+  version: "1.0"
+paths:
+  /home:
+    get:
+      description: home page
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Home page
+  /info:
+    get:
+      description: information about register and login
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Info page
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login by json user with login, password
+      parameters:
+      - description: Login and password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            type: string
+        "400":
+          description: login is impossible
+          schema:
+            type: string
+        "500":
+          description: login error
+          schema:
+            type: string
+      summary: login page
+      tags:
+      - users
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: register by json user with login, password
+      parameters:
+      - description: login and password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: registration successful
+          schema:
+            type: string
+        "400":
+          description: register is impossible
+          schema:
+            type: string
+        "500":
+          description: register error
+          schema:
+            type: string
+      summary: registration page
+      tags:
+      - users
+swagger: "2.0"

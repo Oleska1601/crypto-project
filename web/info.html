@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Info-page</title>
+
+</head>
+<body>
+<h2>Инфорамция о аутентификации и регистрации</h2>
+<h3>/login (POST)</h3>
+<ol>
+    <li>err при decode -> "login is impossible", http.StatusBadRequest</li>
+    <li>user с заданным логин (=пустой структуре, если user не существует,<br>
+        в противном случае получаем его login, password_hash, salt, secret)<br>
+        ->внутренняя err при получении пользователя (какие-то неполадки с извлечением из бд) -> "get user failed",
+        http.StatusInternalServerError</li>
+    <li>проверка на существование user (!= пустой структуре)<br>
+        ->user не существует -> "user does not exist", http.StatusInternalServerError</li>
+    <li>проверка на валидность пароля<br>
+        -> пароль неверный -> "incorrect password", http.StatusInternalServerError</li>
+</ol>
+<b>Итог: http.StatusOK + возврат secret</b>
+
+<h3>/register (POST)</h3>
+<ol>
+    <li>err при decode -> "registration is impossible", http.StatusBadRequest</li>
+<li>получение user с заданным логин (=пустой структуре, если user не существует,<br>
+    в противном случае получаем его login, password_hash, salt, secret)<br>
+->внутренняя err при получении пользователя (какие-то неполадки с извлечением из бд) -> "get user failed",
+    http.StatusInternalServerError</li>
+<li>на существование user (== пустой структуре)<br>
+    ->user существует -> "user already exists", http.StatusInternalServerError</li>
+<li>регистрация user (запись в бд)<br>
+-> внутренняя err при записи пользователя (какие-то неполадки с записью бд)-> "registration is failed",
+    http.StatusInternalServerError)</li>
+</ol>
+<b>Итог: http.StatusCreated + возврат secret</b>
+
+</body>
+</html>
+
+<style>
+    body {
+        font-family: "Century Gothic", sans-serif;
+        font-size: 20px;
+        margin: 20px;
+    }
+</style>

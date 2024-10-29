@@ -1,0 +1,15 @@
+app:
+  name: "crypto-project"
+  version: "1.0.0"
+
+http:
+  port: "8080"
+
+logger:
+  level: "info"
+
+web:
+  path: "web"
+
+db:
+  path: "internal/usecase/repo/sqlitedb/database.db"
