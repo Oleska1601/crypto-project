@@ -48,7 +48,7 @@ func (s *Server) InfoHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body entity.User true "Login and password"
+// @Param user body entity.Credentials true "Login and password"
 // @Success 200 {string} string ""Login successful"
 // @Failure 400 {string} string "login is impossible"
 // @Failure 500 {string} string "login error"
@@ -97,7 +97,7 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body entity.User true "login and password"
+// @Param user body entity.Credentials true "login and password"
 // @Success 201 {string} string "registration successful"
 // @Failure 400 {string} string "register is impossible"
 // @Failure 500 {string} string "register error"

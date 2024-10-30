@@ -70,7 +70,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "$ref": "#/definitions/entity.Credentials"
                         }
                     }
                 ],
@@ -116,7 +116,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "$ref": "#/definitions/entity.Credentials"
                         }
                     }
                 ],
@@ -144,26 +144,16 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entity.User": {
+        "entity.Credentials": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
-                },
                 "login": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "user"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "password_hash": {
-                    "type": "string"
-                },
-                "salt": {
-                    "type": "string"
-                },
-                "secret": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "pass"
                 }
             }
         }
