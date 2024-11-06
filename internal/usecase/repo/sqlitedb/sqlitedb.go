@@ -18,10 +18,15 @@ func New(path string, logger *logger.Logger) (*SqliteDB, error) {
 	logger.Info("Open database")
 	db := &SqliteDB{database: database}
 	err = db.CreateTableUsers()
-	logger.Info("create table users in database")
 	if err != nil {
 		return nil, err
 	}
+	logger.Info("create table users in database")
+	err = db.CreateTableResponses()
+	if err != nil {
+		return nil, err
+	}
+	logger.Info("create table responses in database")
 	return db, nil
 }
 

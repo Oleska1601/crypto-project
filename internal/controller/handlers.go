@@ -2,7 +2,6 @@ package controller
 
 import (
 	"crypto-project/internal/entity"
-	"crypto-project/internal/usecase"
 	"encoding/json"
 	"html/template"
 	"log/slog"
@@ -63,31 +62,23 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			slog.Int("status", http.StatusBadRequest), slog.Any("error", err))
 		return
 	}
-	//getUser = пустой структуре, если user не существует (проверка на логин),
-	//в противном случае получаем его login, password_hash, salt, secret
-	getUser, err := s.u.GetUser(user)
-	if err != nil { //какая-то внутренняя ошибка
-		http.Error(w, "get user failed", http.StatusInternalServerError) //сервер не может обрабатывать запросы
-		s.logger.Error("login error", slog.String("msg", "get user failed"),
+	loginUser, err := s.u.LoginUser(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	token, err := s.GenerateToken(loginUser.ID, "simple token")
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		s.logger.Error("GenerateToken error", slog.String("msg", "Internal Server Error"),
 			slog.Int("status", http.StatusInternalServerError), slog.Any("error", err))
 		return
 	}
-	if !usecase.UserExists(getUser) {
-		http.Error(w, "user does not exist", http.StatusInternalServerError) //сервер не может обрабатывать запросы
-		s.logger.Error("login error", slog.String("msg", "user does not exist"),
-			slog.Int("status", http.StatusInternalServerError), slog.Any("error", err))
-		return
-	}
-	if !usecase.VerificationPassword(user.Password, getUser) {
-		http.Error(w, "incorrect password", http.StatusInternalServerError) //сервер не может обрабатывать запросы
-		s.logger.Error("login error", slog.String("msg", "incorrect password"),
-			slog.Int("status", http.StatusInternalServerError), slog.Any("error", err))
-		return
-	}
+	w.Header().Set("token", token)
 	w.WriteHeader(http.StatusOK)
-	s.logger.Info("login successful", slog.Int("status", http.StatusOK))
+	s.logger.Info("login successful", slog.String("user", loginUser.Login), slog.Int("status", http.StatusOK))
 	//возращаем secret
-	json.NewEncoder(w).Encode(getUser.Secret)
+	json.NewEncoder(w).Encode(loginUser.Secret)
 
 }
 
@@ -99,8 +90,8 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param user body entity.Credentials true "login and password"
 // @Success 201 {string} string "registration successful"
-// @Failure 400 {string} string "register is impossible"
-// @Failure 500 {string} string "register error"
+// @Failure 400 {string} string "registration is impossible"
+// @Failure 500 {string} string "registration error"
 // @Router /register [post]
 func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var user entity.User
@@ -112,35 +103,12 @@ func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			slog.Int("status", http.StatusBadRequest), slog.Any("error", err))
 		return
 	}
-	//getUser = пустой структуре, если user не существует (проверка на логин),
-	//в противном случае получаем его login, password_hash, salt, secret
-	getUser, err := s.u.GetUser(user)
-	if err != nil {
-		http.Error(w, "get user failed", http.StatusInternalServerError) //сервер не может обрабатывать запросы
-		s.logger.Error("registration error", slog.String("msg", "get user failed"),
-			slog.Int("status", http.StatusInternalServerError), slog.Any("error", err))
-		return
-	}
-
-	if usecase.UserExists(getUser) {
-		http.Error(w, "user already exists", http.StatusInternalServerError) //сервер не может обрабатывать запросы
-		s.logger.Error("registration error", slog.String("msg", "user already exists"),
-			slog.Int("status", http.StatusInternalServerError), slog.Any("error", err))
-		return
-	}
-	err = s.u.RegisterUser(&user)
-	if err != nil {
-		http.Error(w, "registration is failed", http.StatusInternalServerError) //сервер не может обрабатывать запросы
-		s.logger.Error("registration error", slog.String("msg", "registration is failed"),
-			slog.Int("status", http.StatusInternalServerError), slog.Any("error", err))
+	if err := s.u.RegisterUser(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	s.logger.Info("registration successful", slog.Int("status", http.StatusCreated))
+	s.logger.Info("registration successful", slog.String("user", user.Login), slog.Int("status", http.StatusCreated))
 	//возращаем secret
 	json.NewEncoder(w).Encode(user.Secret)
 }
-
-//func (s *Server) APIGetHandler(w http.ResponseWriter, r *http.Request) {}
-//func (s *Server) APIConvertHandler(w http.ResponseWriter, r *http.Request) {}
-//func (s *Server) APIHistoryHandler(w http.ResponseWriter, r *http.Request) {}

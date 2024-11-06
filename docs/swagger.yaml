@@ -1,5 +1,16 @@
 basePath: /
 definitions:
+  entity.Conversion:
+    properties:
+      amount:
+        type: number
+      from:
+        example: usd
+        type: string
+      to:
+        example: bitcoin
+        type: string
+    type: object
   entity.Credentials:
     properties:
       login:
@@ -17,6 +28,111 @@ info:
   title: Crypto-Project API
   version: "1.0"
 paths:
+  /api/convert:
+    post:
+      consumes:
+      - application/json
+      description: verify token and convert amount
+      parameters:
+      - description: jwt token for authentification
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: amount, from, to
+        in: body
+        name: conversion
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Conversion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: convert is successful
+          schema:
+            type: string
+        "401":
+          description: Authorization token not provided or Invalid token
+          schema:
+            type: string
+        "403":
+          description: Token has expired
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: convert page
+      tags:
+      - API
+  /api/get:
+    get:
+      consumes:
+      - application/json
+      description: verify token and get currencies
+      parameters:
+      - description: jwt token for authentification
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get currencies is successful
+          schema:
+            type: string
+        "401":
+          description: Authorization token not provided or Invalid token
+          schema:
+            type: string
+        "403":
+          description: Token has expired
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: get page
+      tags:
+      - API
+  /api/history:
+    get:
+      consumes:
+      - application/json
+      description: verify token and get history
+      parameters:
+      - description: jwt token for authentification
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get history is successful
+          schema:
+            type: string
+        "401":
+          description: Authorization token not provided or Invalid token
+          schema:
+            type: string
+        "403":
+          description: Token has expired
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: history page
+      tags:
+      - API
   /home:
     get:
       description: home page
@@ -89,11 +205,11 @@ paths:
           schema:
             type: string
         "400":
-          description: register is impossible
+          description: registration is impossible
           schema:
             type: string
         "500":
-          description: register error
+          description: registration error
           schema:
             type: string
       summary: registration page

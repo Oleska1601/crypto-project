@@ -16,6 +16,165 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/convert": {
+            "post": {
+                "description": "verify token and convert amount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API"
+                ],
+                "summary": "convert page",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "jwt token for authentification",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "amount, from, to",
+                        "name": "conversion",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Conversion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "convert is successful",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization token not provided or Invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Token has expired",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get": {
+            "get": {
+                "description": "verify token and get currencies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API"
+                ],
+                "summary": "get page",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "jwt token for authentification",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get currencies is successful",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization token not provided or Invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Token has expired",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/history": {
+            "get": {
+                "description": "verify token and get history",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API"
+                ],
+                "summary": "history page",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "jwt token for authentification",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get history is successful",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization token not provided or Invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Token has expired",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/home": {
             "get": {
                 "description": "home page",
@@ -128,13 +287,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "register is impossible",
+                        "description": "registration is impossible",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "register error",
+                        "description": "registration error",
                         "schema": {
                             "type": "string"
                         }
@@ -144,6 +303,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entity.Conversion": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "from": {
+                    "type": "string",
+                    "example": "usd"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "bitcoin"
+                }
+            }
+        },
         "entity.Credentials": {
             "type": "object",
             "properties": {

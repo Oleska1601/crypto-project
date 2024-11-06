@@ -33,7 +33,7 @@ func main() {
 	}
 	l.Info("connection to database")
 	defer db.Close(l)
-	u := usecase.New(db)
+	u := usecase.New(db, l)
 	server := controller.New(u, l)
 	server.Run(cfg.HTTP.Port)
 }

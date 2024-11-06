@@ -10,22 +10,27 @@ import (
 )
 
 type Server struct { //controller
-	router *mux.Router
-	u      *usecase.Usecase
-	logger *logger.Logger
+	router    *mux.Router
+	u         *usecase.Usecase
+	logger    *logger.Logger
+	secretKey []byte
 }
 
 func New(u *usecase.Usecase, logger *logger.Logger) *Server {
-	s := &Server{mux.NewRouter(), u, logger}
+	s := &Server{router: mux.NewRouter(),
+		u:         u,
+		logger:    logger,
+		secretKey: []byte("your_secret_key"),
+	}
 	s.router.HandleFunc("/home", s.HomeHandler).Methods("GET")
 	s.router.HandleFunc("/info", s.InfoHandler).Methods("GET")
 
 	s.router.HandleFunc("/login", s.LoginHandler).Methods("POST")
 	s.router.HandleFunc("/register", s.RegisterHandler).Methods("POST")
 
-	//s.router.HandleFunc("/api/get", s.APIGetHandler).Methods("GET")
-	//s.router.HandleFunc("/api/convert", s.APIConvertHandler).Methods("POST")
-	//s.router.HandleFunc("/api/history", s.APIHistoryHandler).Methods("GET")
+	s.router.HandleFunc("/api/get", s.APIGetHandler).Methods("GET")
+	s.router.HandleFunc("/api/convert", s.APIConvertHandler).Methods("POST")
+	s.router.HandleFunc("/api/history", s.APIHistoryHandler).Methods("GET")
 
 	s.router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
