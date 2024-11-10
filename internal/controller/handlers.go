@@ -48,13 +48,12 @@ func (s *Server) InfoHandler(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param user body entity.Credentials true "Login and password"
-// @Success 200 {string} string ""Login successful"
+// @Success 200 {string} string "Login successful"
 // @Failure 400 {string} string "login is impossible"
 // @Failure 500 {string} string "login error"
 // @Router /login [post]
 func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var user entity.User
-	w.Header().Set("Content-Type", "application/json")
 	//получаем только: login, password
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "login is impossible", http.StatusBadRequest)
@@ -95,7 +94,6 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request) {
 // @Router /register [post]
 func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var user entity.User
-	w.Header().Set("Content-Type", "application/json")
 	//получаем только: login, password
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "registration is impossible", http.StatusBadRequest) //сервер не может обрабатывать запросы
